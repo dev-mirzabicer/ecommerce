@@ -17,18 +17,22 @@ contract Seller {
 
     function createItemList(Item[] memory _items) public {
         // Function to create item list
-        items = _items;
+        for (uint i = 0; i < _items.length; i++) {
+            items.push(_items[i]);
+        }
         emit ItemListCreated(_items);
     }
 
     function verifyPayment(address customer) public {
         // Function to verify payment
+        require(!payments[customer], "Payment already verified.");
         payments[customer] = true;
         emit PaymentVerified(customer);
     }
 
     function informWarehouse(address customer, uint256[] memory itemIds) public {
         // Function to inform warehouse
+        require(payments[customer], "Payment not verified.");
         emit WarehouseInformed(customer, itemIds);
     }
 }
