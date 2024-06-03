@@ -21,14 +21,23 @@ contract Customer {
 
     function pay() public payable {
         // Function to pay for the basket
-        // Check if basket exists and is unpaid
-        // Handle payment logic
+        require(baskets[msg.sender].itemIds.length > 0, "Basket does not exist");
+        require(!baskets[msg.sender].paid, "Basket already paid");
+
+        // Handle payment logic 
+        baskets[msg.sender].paid = true;
+
         emit PaymentMade(msg.sender, msg.value);
     }
 
     function receiveItems() public {
         // Function to handle received items
-        // Check if items are sent
+        require(baskets[msg.sender].itemIds.length > 0, "Basket does not exist");
+        require(baskets[msg.sender].paid, "Basket not paid yet");
+
         emit ItemsReceived(msg.sender, baskets[msg.sender].itemIds);
+
+        // Clear the basket after items are received
+        delete baskets[msg.sender];
     }
 }
