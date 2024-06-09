@@ -1,38 +1,27 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./Warehouse.sol";
+
 contract Seller {
-    struct Item {
-        uint256 id;
-        string name;
-        uint256 price;
+    address public owner;
+    Warehouse public warehouse;
+
+    event ProductSold(uint productId, uint quantity, address customer);
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
     }
 
-    Item[] public items;
-    mapping(address => bool) public payments;
-
-    event ItemListCreated(Item[] items);
-    event PaymentVerified(address customer);
-    event WarehouseInformed(address customer, uint256[] itemIds);
-
-    function createItemList(Item[] memory _items) public {
-        // Function to create item list
-        for (uint i = 0; i < _items.length; i++) {
-            items.push(_items[i]);
-        }
-        emit ItemListCreated(_items);
+    constructor(address warehouseAddress) {
+        owner = msg.sender;
+        warehouse = Warehouse(warehouseAddress);
     }
 
-    function verifyPayment(address customer) public {
-        // Function to verify payment
-        require(!payments[customer], "Payment already verified.");
-        payments[customer] = true;
-        emit PaymentVerified(customer);
-    }
-
-    function informWarehouse(address customer, uint256[] memory itemIds) public {
-        // Function to inform warehouse
-        require(payments[customer], "Payment not verified.");
-        emit WarehouseInformed(customer, itemIds);
+    function sellProduct(uint productId, uint quantity, address customer) public onlyOwner {
+        require(warehouse.getInventory(productId) >= quantity, "Not enough inventory");
+        warehouse.removeInventory(productId, quantity);
+        emit ProductSold(productId, quantity, customer);
     }
 }
