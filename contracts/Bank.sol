@@ -2,21 +2,38 @@
 pragma solidity ^0.8.0;
 
 contract Bank {
-    event PaymentReceived(address indexed customer, uint256 amount);
-    event SellerInformed(address indexed customer);
+    address public owner;
+    mapping(address => uint) public balances;
 
-    mapping(address => uint256) public balances;
+    event PaymentProcessed(address from, address to, uint amount);
 
-    function receivePayment(address customer) public payable {
-        // Function to receive payment from customer
-        require(msg.value > 0, "Payment must be greater than zero");
-        balances[customer] += msg.value;
-        emit PaymentReceived(customer, msg.value);
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
     }
 
-    function informSeller(address customer) public {
-        // Function to inform seller about payment
-        require(balances[customer] > 0, "No payment received from this customer");
-        emit SellerInformed(customer);
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function deposit() public payable {
+        balances[msg.sender] += msg.value;
+    }
+
+    function withdraw(uint amount) public {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+        payable(msg.sender).transfer(amount);
+        balances[msg.sender] -= amount;
+    }
+
+    function processPayment(address from, address to, uint amount) public onlyOwner {
+        require(balances[from] >= amount, "Insufficient balance");
+        balances[from] -= amount;
+        balances[to] += amount;
+        emit PaymentProcessed(from, to, amount);
+    }
+
+    function getBalance(address account) public view returns (uint) {
+        return balances[account];
     }
 }
