@@ -5,32 +5,20 @@ import "./Warehouse.sol";
 import "./Customer.sol";
 
 contract Carrier {
-    Warehouse public warehouse;
-    Customer public customer;
+    address public owner;
 
-    event ItemReceived(address warehouse, address customer, uint256[] itemIds);
-    event ItemSubmitted(address customer, uint256[] itemIds);
+    event ProductShipped(uint productId, uint quantity, address customer);
 
-    constructor(address _warehouseAddress, address _customerAddress) {
-        warehouse = Warehouse(_warehouseAddress);
-        customer = Customer(_customerAddress);
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
     }
 
-    function receiveItem(address warehouseAddress, address customerAddress, uint256[] memory itemIds) public {
-        // Function to receive items from warehouse
-        require(warehouseAddress == address(warehouse), "Invalid warehouse address");
-        emit ItemReceived(warehouseAddress, customerAddress, itemIds);
-        
-        // Inform warehouse that items are received by carrier
-        warehouse.handleItems(customerAddress, itemIds);
+    constructor() {
+        owner = msg.sender;
     }
 
-    function submitItem(address customerAddress, uint256[] memory itemIds) public {
-        // Function to submit items to customer
-        require(customerAddress == address(customer), "Invalid customer address");
-        emit ItemSubmitted(customerAddress, itemIds);
-        
-        // Inform customer that their items have been received
-        customer.receiveItems();
-    }
+    function shipProduct(uint productId, uint quantity, address customer) public onlyOwner {
+        emit ProductShipped(productId, quantity, customer);
+        }
 }
