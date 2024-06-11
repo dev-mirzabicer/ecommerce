@@ -1,24 +1,23 @@
-import * as express from 'express';
-import * as path from 'path';
-import * as bodyParser from 'body-parser';
+BigInt.prototype["toJSON"] = function () {
+  return this.toString();
+};
 
-import warehouseRoutes from './routes/warehouseRoutes';
-import sellerRoutes from './routes/sellerRoutes';
-import customerRoutes from './routes/customerRoutes';
-import carrierRoutes from './routes/carrierRoutes';
-import bankRoutes from './routes/bankRoutes';
+import express from 'express';
+import path from 'path';
+import bodyParser from 'body-parser';
+import morgan from "morgan";
+
+import warehouseRoutes from './routes/warehouseRoutes.js';
+import sellerRoutes from './routes/sellerRoutes.js';
+import customerRoutes from './routes/customerRoutes.js';
+import carrierRoutes from './routes/carrierRoutes.js';
+import bankRoutes from './routes/bankRoutes.js';
 
 const app = express();
-const port = parseInt(process.env.PORT) || process.argv[3] || 8080;
+const port = 8181;
 
+app.use(morgan("dev"));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs');
-
-app.get('/', (req, res) => {
-  res.render('index');
-});
 
 app.use('/api/warehouse', warehouseRoutes);
 app.use('/api/seller', sellerRoutes);

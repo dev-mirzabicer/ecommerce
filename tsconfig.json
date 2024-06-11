@@ -1,8 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2022",
     "module": "commonjs",
     "sourceMap": true,
-    "outDir": "dist"
-  }
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": true,
+  },
+  "include": ["./**/*"],
+  "exclude": ["./node_modules"]
 }
