@@ -18,7 +18,10 @@ contract Carrier {
         owner = msg.sender;
     }
 
-    function shipProduct(uint productId, uint quantity, address customer) public onlyOwner {
+    function shipProduct(uint productId, uint quantity, address customer, address warehouseAddress) public onlyOwner {
+        Warehouse warehouse = Warehouse(warehouseAddress);
+        require(warehouse.getInventory(productId) >= quantity, "Not enough inventory");
+        warehouse.removeInventory(productId, quantity);
         emit ProductShipped(productId, quantity, customer);
-        }
+    }
 }
