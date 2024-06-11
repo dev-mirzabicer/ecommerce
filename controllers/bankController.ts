@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Bank } from '../web3';
+import { Bank, web3 } from '../web3';
 
 export const processPayment = async (req: Request, res: Response) => {
   try {

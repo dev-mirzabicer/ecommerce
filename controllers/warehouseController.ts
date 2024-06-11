@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Warehouse } from '../web3';
+import { Warehouse, web3 } from '../web3';
 
 export const getInventory = async (req: Request, res: Response) => {
   try {

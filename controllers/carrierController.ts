@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Carrier } from '../web3';
+import { Carrier, web3 } from '../web3';
 
 export const shipProduct = async (req: Request, res: Response) => {
   try {
